@@ -1,4 +1,4 @@
-const { Sequelize, DataTypes} = require("sequelize");
+const { Sequelize, DataTypes, INTEGER} = require("sequelize");
 const db = require("./../../db/connect")
 
 const Produtos = db.define("produtos",{ 
@@ -13,13 +13,18 @@ const Produtos = db.define("produtos",{
     },
     imagem: {
         type: DataTypes.BLOB("long"),
-        allowNull: false
+        allowNull: true
     },
     preco:{
         type: DataTypes.DECIMAL,
         allowNull: false
    
     },
+    serialProduto:{
+        type: INTEGER,
+        allowNull: true
+    },
+    
 })
 
 module.exports = Produtos;

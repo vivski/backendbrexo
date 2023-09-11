@@ -7,19 +7,39 @@ const Router = express.Router()
 
 
 Router.route("/criarCarrinho").post(async (req,res,next) => {
-    const valoresProduto = req.body
-    const produtoRegistrado = await Produtos.findOne({serialProduto: valoresProduto.id})
-    if(produtoRegistrado){
-      const resposta = await Carrinho.create({produtoId: produtoRegistrado.id}) 
-      res.json(resposta)
-
-    }else{
-      const product =  await Produtos.create(valoresProduto)
-      const resposta = await Carrinho.create({produtoId : product.id})
-      res.json(resposta)
-    }
+    const {id_produto, id_usuario,nome, preco,imagem, quantidade} = req.body
     
-    res.send("erro")
+    try{
+      const produtoRegistrado = await Produtos.findOne({serialProduto: id_produto})
+      
+      if(produtoRegistrado){
+        const resposta = await Carrinho.create({
+           id_produto: produtoRegistrado.id,
+           id_usuario: id_usuario,
+           quantidade: quantidade
+          }) 
+       return res.json(resposta)
+  
+      }else{
+        const product =  await Produtos.create({
+          nome: nome, 
+          preco: preco,
+          imagem: imagem,
+          serialProduto:id_produto
+        })
+        const resposta = await Carrinho.create({
+          id_produto: product.id,
+          id_usuario: id_usuario,
+          quantidade: quantidade
+          
+        })
+        return res.json(resposta)
+      }
+    }catch(error){
+      return res.send(error)
+    }
+
+    
 })
 
 Router.route("/deletarItemCarrinho").delete(async (req,res,next) => {

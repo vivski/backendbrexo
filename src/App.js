@@ -23,12 +23,12 @@ App.use(produtosRouter)
 
 const port = 3000
 App.listen(port, async () => { 
-   User.hasOne(Favoritos, {foreignKey: "userId", as: "favoritosUsuario" })
-   Favoritos.belongsTo(User)
-   Favoritos.hasMany(Produtos, {foreignKey: "favoritosId", as: "favoritosProdutos"})
-   User.hasOne(Carrinho, { foreignKey: "userId", as: "carrinhoUsuario"})
-   Carrinho.belongsTo(User)
-   Produtos.hasMany(Carrinho, { foreignKey: "produtoId", as: "produtosCarrinho"})
+
+   Favoritos.belongsTo(User, { foreignKey: "id_usuario"})
+   Favoritos.belongsTo(Produtos, {foreignKey: "id_produto"})
+
+   Carrinho.belongsTo(User, {foreignKey: "id_usuario"})
+   Carrinho.belongsTo(Produtos, {foreignKey: "id_produto"})
 
 
    console.log("servidor ligado")

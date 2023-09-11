@@ -1,39 +1,53 @@
-const express = require("express")
+const express = require("express");
 
-const Favoritos = require("./../../models/favoritos")
-const Produtos = require("../../models/produtos")
+const Favoritos = require("./../../models/favoritos");
+const Produtos = require("../../models/produtos");
 
-const Router = express.Router()
+const Router = express.Router();
 
+Router.route("/adicionarFavoritos").post(async (req, res, next) => {
+  const { id_produto, id_usuario, nome, preco, imagem } = req.body;
 
-Router.route("/adicionarFavoritos").post( async (req,res,next) => {
-console.log("recebido")
- const {id, nome,preco,imagem} = req.body
- const produto = {id : id, preco : preco.replace("," , "."), nome: nome, imagem : imagem}
+  const produtoRegistrado = await Produtos.findOne({
+    where: { serialProduto: id_produto },
+  });
 
- const produtoRegistrado = await Produtos.findOne ( {where : { serialProduto : produto.id}})
- if (produtoRegistrado) {
- const resposta = await Favoritos.create({favoritosId: produtoRegistrado.id})
-    res.json(resposta)
- } else {
-    const product = await Produtos.create(produto)
-    const resposta = await Favoritos.create({favoritosId : product})
-    res.json(resposta)
- }
+  if (produtoRegistrado) {
+    const resposta = await Favoritos.create({
+      id_usuario: id_usuario,
+      id_produto: produtoRegistrado.id,
+    });
+    res.json(resposta);
+  } else {
+    const product = await Produtos.create({
+      nome: nome,
+      preco: preco,
+      imagem: imagem,
+      serialProduto: id_produto,
+    });
+    const resposta = await Favoritos.create({
+      id_usuario: id_usuario,
+      id_produto: product.id,
+    });
+    res.json(resposta);
+  }
+});
 
-})
+Router.route("/deletarItemFavoritado").delete(async (req, res, next) => {
+  const { id } = req.body;
+  const produto = await Favoritos.findOne({ where: { favoritosId: id } });
+  produto.destroy;
+});
 
-Router.route("/deletarItemFavoritado").delete( async (req,res,next) => {
-const {id} = req.body
-const produto = await Favoritos.findOne({where : {favoritosId : id}})
-produto.destroy
-})
+Router.route("/listarFavoritos").post(async (req, res, next) => {
+  const { id_usuario } = req.body;
 
-Router.route("/listarFavoritos").get( async (req,res,next) => {
-   const favoritos = await Favoritos.findAll()
-   req.json(favoritos)
-})
+  const listFavoritos = await Favoritos.findAll({
+    where: { id_usuario: id_usuario },
+    include: Produtos,
+    attributes:{exclude:["createdAt", "updatedAt"]}
+  })
+  res.json(listFavoritos);
+});
 
-
-
-module.exports= Router
+module.exports = Router;

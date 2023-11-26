@@ -18,7 +18,7 @@ Produtos = db.define("produtos", {
   },
   preco: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: false
   },
   serialProduto: {
     type: INTEGER,

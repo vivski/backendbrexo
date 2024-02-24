@@ -8,7 +8,7 @@ const {Sequelize} = require("sequelize")
     }
     else{
         
-    const db = new Sequelize('brexobackend','root','senhaforte@lula13', { host:"localhost", dialect:"mysql"})
+    const db = new Sequelize('brexobackend','root','mysql2002', { host:"localhost", dialect:"mysql"})
     module.exports = db;
     }
 
